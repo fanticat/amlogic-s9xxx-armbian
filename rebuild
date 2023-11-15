@@ -51,7 +51,7 @@ armbian_outputpath="${current_path}/build/output/images"
 armbian_rebuild_file="${armbian_outputpath}/*-trunk_*.img"
 build_path="${current_path}/build-armbian"
 kernel_path="${build_path}/kernel"
-uboot_path="${build_path}/u-boot/u-boot"
+uboot_path="${build_path}/u-boot"
 common_files="${build_path}/armbian-files/common-files"
 platform_files="${build_path}/armbian-files/platform-files"
 different_files="${build_path}/armbian-files/different-files"
@@ -74,7 +74,7 @@ armbian_release_file="etc/armbian-release"
 ophub_release_file="etc/ophub-release"
 
 # U-BOOT files download repository
-uboot_repo="https://github.com/ophub/u-boot/tree/main/u-boot"
+uboot_repo="https://github.com/fanticat/u-boot/tree/main/u-boot"
 # Convert firmware repository address to svn format
 uboot_repo="${uboot_repo//tree\/main/trunk}"
 
@@ -332,12 +332,12 @@ download_depends() {
     echo -e "${STEPS} Start downloading dependency files..."
 
     # Download Armbian u-boot files
-    # svn co ${uboot_repo} ${uboot_path} --force --quiet
-    # [[ "${?}" -eq "0" ]] && echo -e "${INFO} u-boot download completed." || error_msg "u-boot download failed."
+    svn co ${uboot_repo} ${uboot_path} --force --quiet
+    [[ "${?}" -eq "0" ]] && echo -e "${INFO} u-boot download completed." || error_msg "u-boot download failed."
 
     # Download Armbian firmware files
-    # svn co ${firmware_repo} ${firmware_path} --force --quiet
-    # [[ "${?}" -eq "0" ]] && echo -e "${INFO} firmware download completed." || error_msg "firmware download failed."
+    svn co ${firmware_repo} ${firmware_path} --force --quiet
+    [[ "${?}" -eq "0" ]] && echo -e "${INFO} firmware download completed." || error_msg "firmware download failed."
 }
 
 query_kernel() {
@@ -1099,13 +1099,13 @@ loop_rebuild() {
 
                     # Check disk space size
                     echo -ne "(${j}.${i}) Start building Armbian [\033[92m ${board} - ${kd}/${kernel} \033[0m]. "
-                    # now_remaining_space="$(df -Tk ${current_path} | grep '/dev/' | awk '{print $5}' | echo $(($(xargs) / 1024 / 1024)))"
-                    # if [[ "${now_remaining_space}" -le "6" ]]; then
-                    #    echo -e "${WARNING} Remaining space is less than 6G, exit this build."
-                    #    break
-                    #else
-                    #    echo "Remaining space is ${now_remaining_space}G."
-                    #fi
+                    now_remaining_space="$(df -Tk ${current_path} | grep '/dev/' | awk '{print $5}' | echo $(($(xargs) / 1024 / 1024)))"
+                    if [[ "${now_remaining_space}" -le "6" ]]; then
+                        echo -e "${WARNING} Remaining space is less than 6G, exit this build."
+                        break
+                    else
+                        echo "Remaining space is ${now_remaining_space}G."
+                    fi
 
                     # Execute the following functions in sequence
                     extract_armbian
