@@ -51,7 +51,7 @@ armbian_outputpath="${current_path}/build/output/images"
 armbian_rebuild_file="${armbian_outputpath}/*-trunk_*.img"
 build_path="${current_path}/build-armbian"
 kernel_path="${build_path}/kernel"
-uboot_path="${build_path}/u-boot"
+uboot_path="${build_path}/u-boot/u-boot"
 common_files="${build_path}/armbian-files/common-files"
 platform_files="${build_path}/armbian-files/platform-files"
 different_files="${build_path}/armbian-files/different-files"
@@ -261,7 +261,7 @@ check_data() {
     # Columns of ${model_conf}:
     # 1.ID  2.MODEL  3.SOC  4.FDTFILE  5.UBOOT_OVERLOAD  6.MAINLINE_UBOOT  7.BOOTLOADER_IMG  8.DESCRIPTION
     # 9.KERNEL_TAGS  10.PLATFORM  11.FAMILY  12.BOOT_CONF  13.CONTRIBUTORS  14.BOARD  15.BUILD
-    [[ -f "${model_conf}" ]] || error_msg "Missing model config file: [ ${model_conf} ]"
+	    [[ -f "${model_conf}" ]] || error_msg "Missing model config file: [ ${model_conf} ]"
 
     # Get a list of build devices
     if [[ "${build_board}" == "all" ]]; then
@@ -332,12 +332,12 @@ download_depends() {
     echo -e "${STEPS} Start downloading dependency files..."
 
     # Download Armbian u-boot files
-    svn co ${uboot_repo} ${uboot_path} --force --quiet
-    [[ "${?}" -eq "0" ]] && echo -e "${INFO} u-boot download completed." || error_msg "u-boot download failed."
+    # svn co ${uboot_repo} ${uboot_path} --force --quiet
+    # [[ "${?}" -eq "0" ]] && echo -e "${INFO} u-boot download completed." || error_msg "u-boot download failed."
 
     # Download Armbian firmware files
-    svn co ${firmware_repo} ${firmware_path} --force --quiet
-    [[ "${?}" -eq "0" ]] && echo -e "${INFO} firmware download completed." || error_msg "firmware download failed."
+    # svn co ${firmware_repo} ${firmware_path} --force --quiet
+    # [[ "${?}" -eq "0" ]] && echo -e "${INFO} firmware download completed." || error_msg "firmware download failed."
 }
 
 query_kernel() {
@@ -630,7 +630,7 @@ make_image() {
     # Write the specific bootloader for [ Rockchip ] boxes
     [[ "${PLATFORM}" == "rockchip" ]] && {
         bootloader_path="${uboot_path}/${PLATFORM}/${board}"
-        if [[ -n "${BOOTLOADER_IMG}" && -f "${bootloader_path}/${BOOTLOADER_IMG}" ]] &&
+		        if [[ -n "${BOOTLOADER_IMG}" && -f "${bootloader_path}/${BOOTLOADER_IMG}" ]] &&
             [[ -n "${MAINLINE_UBOOT}" && -f "${bootloader_path}/${MAINLINE_UBOOT}" ]] &&
             [[ -n "${TRUST_IMG}" && -f "${bootloader_path}/${TRUST_IMG}" ]]; then
             dd if="${bootloader_path}/${BOOTLOADER_IMG}" of="${loop_new}" conv=fsync,notrunc bs=512 seek=64 2>/dev/null
@@ -1066,7 +1066,7 @@ loop_rebuild() {
             # Set specific configuration for building Armbian system
             board="${b}"
             confirm_version
-
+            
             # Determine kernel tags
             kd="${KERNEL_TAGS}"
             case "${KERNEL_TAGS}" in
@@ -1099,13 +1099,13 @@ loop_rebuild() {
 
                     # Check disk space size
                     echo -ne "(${j}.${i}) Start building Armbian [\033[92m ${board} - ${kd}/${kernel} \033[0m]. "
-                    now_remaining_space="$(df -Tk ${current_path} | grep '/dev/' | awk '{print $5}' | echo $(($(xargs) / 1024 / 1024)))"
-                    if [[ "${now_remaining_space}" -le "6" ]]; then
-                        echo -e "${WARNING} Remaining space is less than 6G, exit this build."
-                        break
-                    else
-                        echo "Remaining space is ${now_remaining_space}G."
-                    fi
+                    # now_remaining_space="$(df -Tk ${current_path} | grep '/dev/' | awk '{print $5}' | echo $(($(xargs) / 1024 / 1024)))"
+                    # if [[ "${now_remaining_space}" -le "6" ]]; then
+                    #    echo -e "${WARNING} Remaining space is less than 6G, exit this build."
+                    #    break
+                    #else
+                    #    echo "Remaining space is ${now_remaining_space}G."
+                    #fi
 
                     # Execute the following functions in sequence
                     extract_armbian

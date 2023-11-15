@@ -1,0 +1,7 @@
+verbosity=1
+bootlogo=false
+overlay_prefix=rk35xx
+fdtfile=rockchip/rk3566-jp-box.dtb
+rootdev=UUID=1ca468f1-8c4c-4682-a7fa-53a567a99ef4
+rootfstype=ext4
+usbstoragequirks=0x2537:0x1066:u,0x2537:0x1068:u

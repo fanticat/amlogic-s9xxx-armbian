@@ -47,6 +47,7 @@ on:
           - nanopi-r5c
           - nanopi-r5s
           - panther-x2
+          - jp-box
           - r66s
           - r68s
           - rock5b
